@@ -100,26 +100,61 @@ public class ArvoreABB {
         }
     }
     
-    public boolean busca (double valor){
-        if (vazia()){
-            return false;
-        }
+    public boolean busca(double valor){
+        if (vazia()) { return false; }
         
         No aux = this.raiz;
-        while(aux != null){
-            if(aux.getValor()== valor){
-                return true;
-            }
-            else if(valor > aux.getValor()){
-                aux=aux.getDireita();
-            }
-            else{
-                aux=aux.getEsquerda();
-            }
+        while (aux != null){
+            if(aux.getValor() == valor){ return true;  }
+            else if (valor > aux.getValor()){ aux = aux.getDireita(); }
+            else { aux = aux.getEsquerda(); }
         }
         
         return false;
+        
     }
+    
+    
+    public int grau(No temp){
+        if (temp.getDireita() == null && temp.getEsquerda() == null) {
+            return 0;
+        }
+        else if (temp.getDireita() != null && temp.getEsquerda() == null) {
+            return 1;
+        }
+        else if (temp.getDireita() == null && temp.getEsquerda() != null) {
+            return 1;
+        }
+        else if (temp.getDireita() != null && temp.getEsquerda() != null) {
+            return 2;
+        }
+        
+        return -1;
+    }
+    
+    
+    public boolean removeElementoGrau0(double valor){
+        
+        No aux = this.raiz;
+        No ant = null;
+        while(aux.getValor() != valor){
+            if (valor > aux.getValor()){
+                ant = aux;
+                aux = aux.getDireita();
+            } else {
+                ant = aux;
+                aux = aux.getEsquerda();
+            }    
+        }
+        if (grau(aux) != 0) {return false;}
+
+        if (valor > ant.getValor()){  ant.setDireita(null);} 
+        else { ant.setEsquerda(null); }
+        aux = null;
+        return true;
+        }
+        
+    
     
     
     
