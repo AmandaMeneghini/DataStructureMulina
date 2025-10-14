@@ -131,6 +131,15 @@ public class ArvoreABB {
         return -1;
     }
 
+    private int altura(No no) {
+        if (no == null) {
+            return -1;
+        }
+        int alturaEsquerda = altura(no.getEsquerda());
+        int alturaDireita = altura(no.getDireita());
+        return 1 + Math.max(alturaEsquerda, alturaDireita);
+    }
+
     public boolean removeElementoGrau0(double valor) {
 
         No aux = this.raiz;
@@ -149,7 +158,7 @@ public class ArvoreABB {
             return false;
         }
 
-        if(ant == null){
+        if (ant == null) {
             this.raiz = null;
         } else {
             if (valor > ant.getValor()) {
@@ -197,4 +206,62 @@ public class ArvoreABB {
         aux = null;
         return true;
     }
-}
+
+    public boolean removeElementoGrau2(double valor) {
+        No aux = this.raiz;
+        No ant = null;
+
+        while (aux != null && aux.getValor() != valor) {
+            ant = aux;
+            if (valor > aux.getValor()) {
+                aux = aux.getDireita();
+            } else {
+                aux = aux.getEsquerda();
+            }
+        }
+
+        if (aux == null || grau(aux) != 2) {
+            return false;
+        }
+
+        if (altura(aux.getEsquerda()) > altura(aux.getDireita())) {
+            
+            No predecessor = aux.getEsquerda();
+            No antPredecessor = aux;
+
+            while (predecessor.getDireita() != null) {
+                antPredecessor = predecessor;
+                predecessor = predecessor.getDireita();
+            }
+            aux.setValor(predecessor.getValor());
+
+            if (antPredecessor == aux) {
+                aux.setEsquerda(predecessor.getEsquerda());
+            } else {
+                antPredecessor.setDireita(predecessor.getEsquerda());
+            }
+            predecessor = null;
+
+        } else {
+
+            No sucessor = aux.getDireita();
+            No antSucessor = aux;
+
+            while (sucessor.getEsquerda() != null) {
+                antSucessor = sucessor;
+                sucessor = sucessor.getEsquerda();
+            }
+            aux.setValor(sucessor.getValor());
+            
+            if (antSucessor == aux) {
+                aux.setDireita(sucessor.getDireita());
+            } else {
+                antSucessor.setEsquerda(sucessor.getDireita());
+            }
+            sucessor = null;
+        }
+
+        return true;
+    }
+
+};
