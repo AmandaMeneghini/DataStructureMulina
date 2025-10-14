@@ -1,52 +1,50 @@
 package arvorebinaria;
 
 public class ArvoreABB {
-    
+
     private No raiz;
-    
-    public ArvoreABB(){
+
+    public ArvoreABB() {
         this.raiz = null;
     }
-    
-    public boolean vazia(){
+
+    public boolean vazia() {
         return (this.raiz == null);
     }
-    
-    private boolean direitaVazia(No elemento){
+
+    private boolean direitaVazia(No elemento) {
         return (elemento.getDireita() == null);
     }
-    
-    private boolean esquerdaVazia(No elemento){
+
+    private boolean esquerdaVazia(No elemento) {
         return (elemento.getEsquerda() == null);
     }
-    
-    public boolean insere(double valor){
-        if (vazia()){
+
+    public boolean insere(double valor) {
+        if (vazia()) {
             No aux = new No(valor);
             this.raiz = aux;
             return true;
         }
-        
+
         No aux = new No(valor);
-        
+
         No ant = null;
         No temp = this.raiz;
-        while(temp != null){
-            if (valor == temp.getValor()){
+
+        while (temp != null) {
+            if (valor == temp.getValor()) {
                 return false;
-            }
-            else if (valor > temp.getValor()){ 
+            } else if (valor > temp.getValor()) {
                 ant = temp;
                 temp = temp.getDireita();
-            } 
-            //if (valor < temp.getValor()){
-            else {
+            } else {
                 ant = temp;
                 temp = temp.getEsquerda();
             }
         }
-        
-        if (valor > ant.getValor()){
+
+        if (valor > ant.getValor()) {
             ant.setDireita(aux);
             return true;
         } else {
@@ -54,108 +52,149 @@ public class ArvoreABB {
             return true;
         }
     }
-    
-    public void printPrecurso(){
+
+    public void printPrecurso() {
         if (vazia()) {
             System.out.println("Arvore vazia");
         }
         precurso(this.raiz);
     }
-    public void printIncurso(){
+
+    public void printIncurso() {
         if (vazia()) {
             System.out.println("Arvore vazia");
         }
         incurso(this.raiz);
     }
-    
-    private void precurso(No elemento){
-        
-        if (elemento == null) { 
+
+    private void precurso(No elemento) {
+
+        if (elemento == null) {
             return;
-        }
-        else {
+        } else {
             System.out.println(elemento.getValor());
-            if (elemento.getEsquerda() != null) 
+            if (elemento.getEsquerda() != null)
                 precurso(elemento.getEsquerda());
-            
-            if (elemento.getDireita() != null) 
+
+            if (elemento.getDireita() != null)
                 precurso(elemento.getDireita());
         }
     }
-    
-    private void incurso(No elemento){
-        
-        if (elemento == null) { 
+
+    private void incurso(No elemento) {
+
+        if (elemento == null) {
             return;
-        }
-        else {
-            
-            if (elemento.getEsquerda() != null) 
+        } else {
+
+            if (elemento.getEsquerda() != null)
                 incurso(elemento.getEsquerda());
-            
+
             System.out.println(elemento.getValor());
-            
-            if (elemento.getDireita() != null) 
+
+            if (elemento.getDireita() != null)
                 incurso(elemento.getDireita());
         }
     }
-    
-    public boolean busca(double valor){
-        if (vazia()) { return false; }
-        
+
+    public boolean busca(double valor) {
+        if (vazia()) {
+            return false;
+        }
+
         No aux = this.raiz;
-        while (aux != null){
-            if(aux.getValor() == valor){ return true;  }
-            else if (valor > aux.getValor()){ aux = aux.getDireita(); }
-            else { aux = aux.getEsquerda(); }
-        }
-        
-        return false;
-        
-    }
-    
-    
-    public int grau(No temp){
-        if (temp.getDireita() == null && temp.getEsquerda() == null) {
-            return 0;
-        }
-        else if (temp.getDireita() != null && temp.getEsquerda() == null) {
-            return 1;
-        }
-        else if (temp.getDireita() == null && temp.getEsquerda() != null) {
-            return 1;
-        }
-        else if (temp.getDireita() != null && temp.getEsquerda() != null) {
-            return 2;
-        }
-        
-        return -1;
-    }
-    
-    
-    public boolean removeElementoGrau0(double valor){
-        
-        No aux = this.raiz;
-        No ant = null;
-        while(aux.getValor() != valor){
-            if (valor > aux.getValor()){
-                ant = aux;
+        while (aux != null) {
+            if (aux.getValor() == valor) {
+                return true;
+            } else if (valor > aux.getValor()) {
                 aux = aux.getDireita();
             } else {
-                ant = aux;
                 aux = aux.getEsquerda();
-            }    
+            }
         }
-        if (grau(aux) != 0) {return false;}
 
-        if (valor > ant.getValor()){  ant.setDireita(null);} 
-        else { ant.setEsquerda(null); }
+        return false;
+
+    }
+
+    public int grau(No temp) {
+        if (temp.getDireita() == null && temp.getEsquerda() == null) {
+            return 0;
+        } else if (temp.getDireita() != null && temp.getEsquerda() == null) {
+            return 1;
+        } else if (temp.getDireita() == null && temp.getEsquerda() != null) {
+            return 1;
+        } else if (temp.getDireita() != null && temp.getEsquerda() != null) {
+            return 2;
+        }
+
+        return -1;
+    }
+
+    public boolean removeElementoGrau0(double valor) {
+
+        No aux = this.raiz;
+        No ant = null;
+
+        while (aux.getValor() != valor) {
+            ant = aux;
+            if (valor > aux.getValor()) {
+                aux = aux.getDireita();
+            } else {
+                aux = aux.getEsquerda();
+            }
+        }
+
+        if (aux == null || grau(aux) != 0) {
+            return false;
+        }
+
+        if(ant == null){
+            this.raiz = null;
+        } else {
+            if (valor > ant.getValor()) {
+                ant.setDireita(null);
+            } else {
+                ant.setEsquerda(null);
+            }
+        }
+
         aux = null;
         return true;
+
+    }
+
+    public boolean removeElementoGrau1(double valor) {
+
+        No aux = this.raiz;
+        No ant = null;
+
+        while (aux != null && aux.getValor() != valor) {
+            ant = aux;
+            if (valor > aux.getValor()) {
+                aux = aux.getDireita();
+            } else {
+                aux = aux.getEsquerda();
+            }
         }
-        
-    
-    
-    
-    
+
+        if (aux == null || grau(aux) != 1) {
+            return false;
+        }
+
+        No filho = (aux.getEsquerda() != null) ? aux.getEsquerda() : aux.getDireita();
+
+        if (ant == null) {
+            this.raiz = filho;
+        } else {
+            if (aux == ant.getEsquerda()) {
+                ant.setEsquerda(filho);
+            } else {
+                ant.setDireita(filho);
+            }
+        }
+
+        aux = null;
+        return true;
+    }
 }
