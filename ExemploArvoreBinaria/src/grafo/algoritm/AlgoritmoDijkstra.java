@@ -1,62 +1,83 @@
 package grafo.algoritm;
 
-import grafo.model.Aresta;
 import grafo.model.Grafo;
-import grafo.model.Vertice;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
 
 
 public class AlgoritmoDijkstra<T> {
 
-    public ResultadoDijkstra<T> encontrarCaminhosMaisCurtos(Grafo<T> grafo, Vertice<T> origem) {
-        
-        Map<Vertice<T>, Integer> distancias = new HashMap<>();
-        PriorityQueue<Vertice<T>> filaPrioridade = new PriorityQueue<>(
-            Comparator.comparingInt(distancias::get)
-        );
 
-        Map<Vertice<T>, Vertice<T>> predecessores = new HashMap<>();
+    private static final int INFINITO = Integer.MAX_VALUE;
+
+    public ResultadoDijkstra encontrarCaminhosMaisCurtos(Grafo<T> grafo, T origemDado) {
         
-        for (Vertice<T> vertice : grafo.getVertices()) {
-            distancias.put(vertice, Integer.MAX_VALUE);
-            predecessores.put(vertice, null);
+        int numVertices = grafo.getNumVertices();
+        int indiceOrigem = grafo.getIndice(origemDado);
+
+        if (indiceOrigem == -1) {
+            throw new IllegalArgumentException("Vértice de origem não encontrado no grafo.");
+        }
+
+
+        int[] distancias = new int[numVertices];
+        int[] predecessores = new int[numVertices];
+        boolean[] visitados = new boolean[numVertices];
+
+
+        for (int i = 0; i < numVertices; i++) {
+            distancias[i] = INFINITO;
+            predecessores[i] = -1;
         }
         
-        distancias.put(origem, 0);
-        filaPrioridade.add(origem);
 
-        while (!filaPrioridade.isEmpty()) {
+        distancias[indiceOrigem] = 0;
 
-            Vertice<T> u = filaPrioridade.poll();
 
-            for (Aresta<T> aresta : grafo.getArestas(u)) {
-                Vertice<T> v = aresta.destino();
-                int pesoAresta = aresta.peso();
+        for (int count = 0; count < numVertices; count++) {
+            
+
+            int u = encontrarMenorDistanciaNaoVisitado(distancias, visitados, numVertices);
+
+
+            if (u == -1) {
+                break;
+            }
+
+
+            visitados[u] = true;
+
+
+            for (int v = 0; v < numVertices; v++) {
                 
-                int distAteU = distancias.get(u);
+                int pesoAresta = grafo.getPeso(u, v);
                 
-                if (distAteU == Integer.MAX_VALUE) {
-                    continue;
-                }
 
-                int novaDist = distAteU + pesoAresta;
+                if (pesoAresta > 0 && !visitados[v] && distancias[u] != INFINITO) {
 
-                if (novaDist < distancias.get(v)) {
+                    int novaDist = distancias[u] + pesoAresta;
 
-                    distancias.put(v, novaDist);
+                    if (novaDist < distancias[v]) {
 
-                    predecessores.put(v, u);
-                    
-                    filaPrioridade.remove(v);
-                    filaPrioridade.add(v);
+                        distancias[v] = novaDist;
+                        predecessores[v] = u;
+                    }
                 }
             }
         }
         
-        return new ResultadoDijkstra<>(distancias, predecessores);
+        return new ResultadoDijkstra(distancias, predecessores);
+    }
+
+    private int encontrarMenorDistanciaNaoVisitado(int[] distancias, boolean[] visitados, int numVertices) {
+        int menorDistancia = INFINITO;
+        int indiceMenor = -1;
+
+        for (int v = 0; v < numVertices; v++) {
+            if (!visitados[v] && distancias[v] <= menorDistancia) {
+                menorDistancia = distancias[v];
+                indiceMenor = v;
+            }
+        }
+        
+        return indiceMenor;
     }
 }
