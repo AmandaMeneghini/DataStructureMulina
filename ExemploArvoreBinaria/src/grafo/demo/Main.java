@@ -24,11 +24,16 @@ public class Main {
         Grafo<String> grafo1 = new Grafo<>();
 
         grafo1.adicionarAresta("a", "b", 2);
+
         grafo1.adicionarAresta("b", "e", 5);
-        grafo1.adicionarAresta("c", "f", 2);
+
+        grafo1.adicionarAresta("c", "a", 1);
+        grafo1.adicionarAresta("c", "f", 5);
         grafo1.adicionarAresta("c", "b", 4);
+        grafo1.adicionarAresta("c", "d", 3);
 
         grafo1.adicionarAresta("e", "d", 1);
+
         grafo1.adicionarAresta("f", "e", 2);
         grafo1.adicionarAresta("f", "f", 2);
 
@@ -114,29 +119,26 @@ public class Main {
             return;
         }
 
+        if (distancias.get(destinoEspecifico) == 0) {
+            System.out.println("  " + destinoEspecifico.dado() + " (Custo: 0)");
+            return;
+        }
+
         while (passo != null) {
             caminho.add(passo);
             passo = predecessores.get(passo);
         }
         Collections.reverse(caminho);
 
-        if (caminho.isEmpty() || !caminho.get(0).equals(predecessores.keySet().iterator().next())) {
 
-            if (distancias.get(destinoEspecifico) == 0) {
-                System.out.println("  " + destinoEspecifico.dado() + " (Custo: 0)");
-            } else {
-                System.out.println("  Nenhum caminho encontrado.");
+        StringBuilder caminhoStr = new StringBuilder();
+        for (int i = 0; i < caminho.size(); i++) {
+            caminhoStr.append(caminho.get(i).dado());
+            if (i < caminho.size() - 1) {
+                caminhoStr.append(" -> ");
             }
-        } else {
-            StringBuilder caminhoStr = new StringBuilder();
-            for (int i = 0; i < caminho.size(); i++) {
-                caminhoStr.append(caminho.get(i).dado());
-                if (i < caminho.size() - 1) {
-                    caminhoStr.append(" -> ");
-                }
-            }
-            caminhoStr.append(" (Custo Total: ").append(distancias.get(destinoEspecifico)).append(")");
-            System.out.println("  " + caminhoStr.toString());
         }
+        caminhoStr.append(" (Custo Total: ").append(distancias.get(destinoEspecifico)).append(")");
+        System.out.println("  " + caminhoStr.toString());
     }
 }
